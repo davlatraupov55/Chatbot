@@ -8,6 +8,7 @@ import { Data } from "../consts/data";
 import { useFonts } from "expo-font";
 import { BlurView } from "expo-blur";
 import shortid from "shortid";
+import PhotoPicker from "../components/PhotoPicker";
 
 export default function ChatScreen() {
   const [messages, setMessages] = useState([{}]);
@@ -131,6 +132,7 @@ export default function ChatScreen() {
         minInputToolbarHeight={height / 8}
         placeholder={"Сообщение..."}
       />
+      {/* <PhotoPicker/> */}
     </View>
     // </BlurView>
   );

@@ -2,7 +2,7 @@ import { StyleSheet, View } from "react-native";
 import AlertComponent from "./src/components/AlertComponent";
 import ErrorComponent from "./src/components/ErrorComponent";
 import StackNavigator from "./src/Navigators/StackNavigator";
-
+ 
 
 export default function App() {
 
