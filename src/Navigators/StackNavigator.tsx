@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ChatScreen from "../screens/chatScreen";
 import BackButton from "../components/BackButton";
 import IgnorButton from "../components/IgnorButton";
+import {gestureHandlerRootHOC} from 'react-native-gesture-handler'
 
 const HomeStack = createNativeStackNavigator();
 
@@ -19,7 +20,7 @@ export default function StackNavigator() {
             headerTitle: "",
             headerRight: () => <IgnorButton />,
           }}
-          component={ChatScreen}
+          component={gestureHandlerRootHOC(ChatScreen)}
         />
       </HomeStack.Navigator>
     </NavigationContainer>
