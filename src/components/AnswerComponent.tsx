@@ -1,38 +1,42 @@
 import { StyleSheet, Text, View } from "react-native";
 import { height, width } from "../consts/dimentions";
 import { useFonts } from "expo-font";
+import shortid from "shortid";
 
-export default function AnswerComponent(props: any) {
-  const time = props.currentMessage.createdAt.toString();
+export default function AnswerComponent(props: any): any {
+  const DATA = props.data
+  // console.log(DATA)
   const [fontsLoaded] = useFonts({
     MR: require("../fonts/Manrope-SemiBold.ttf"),
   });
   if (fontsLoaded) {
     return (
-      <View style={styles.container}>
+      <>
+      {DATA.map((item: { text: string; date: string | number; isLeft:boolean }) => (
+      <View key={shortid.generate()} style={[styles.container, {alignSelf: item.isLeft?"flex-start":"flex-end",  backgroundColor:item.isLeft?"#E3EAF0":"#E5E5E5" }]}>
         <View style={styles.messageContainer}>
           <View style={styles.messageView}>
             <Text style={[styles.text, { fontFamily: "MR" }]}>
-              {props.currentMessage.text}
+              {item.text}
             </Text>
           </View>
           <View style={styles.dateView}>
             <Text style={[styles.textDate, { fontFamily: "MR" }]}>
-              {time.slice(15, 21)}
+             {item.date}
             </Text>
           </View>
         </View>
       </View>
+      ))}
+      </>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#E5E5E5",
     borderRadius: 8,
     maxWidth: "80%",
-    alignSelf: "flex-start",
     flexDirection: "row",
     paddingHorizontal: 10,
     marginHorizontal: 10,
@@ -66,7 +70,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   textDate: {
-    fontSize: width / 28.3,
+    fontSize: width / 30.3,
     color: "#5E637A",
     alignSelf: "flex-start",
     position: "relative",

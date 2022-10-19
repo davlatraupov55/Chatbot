@@ -1,220 +1,88 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { GiftedChat } from "react-native-gifted-chat";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
-import AnswerComponent from "../components/AnswerComponent";
-import { renderSend, renderInputToolbar } from "../RenderComponents";
+import React, { useEffect, useState } from "react";
+import { View, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { height, width } from "../consts/dimentions";
-import { Data } from "../consts/data";
-import { useFonts } from "expo-font";
-import { BlurView } from "expo-blur";
+import { useDispatch, useSelector } from "react-redux";
+import { setMessage } from "../redux/reducer";
+import { ScrollView, TextInput } from "react-native-gesture-handler";
+import AnswerComponent from "../components/AnswerComponent";
 import shortid from "shortid";
-import PhotoPicker from "../components/PhotoPicker";
+import moment from 'moment';
+
 
 export default function ChatScreen() {
-  const [messages, setMessages] = useState([{}]);
-  const DATA = Data.damage;
-  useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: "",
-        createdAt: new Date(),
-        user: {
-          _id: 1,
-          name: "",
-          avatar: "",
-        },
-      },
-      {
-        _id: 2,
-        text: "Вы хотите сообщить о неисправности?",
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: "",
-          avatar: "",
-        },
-      },
-    ]);
-  }, []);
 
-  const QuestionVariant = (props: any) => {
-    const Click = (text: string) => {};
-    const [fontsLoaded] = useFonts({
-      MR: require("../fonts/Manrope-SemiBold.ttf"),
-    });
-    if (fontsLoaded) {
-      return (
-        <View>
-          {DATA.map((item) => (
-            <TouchableOpacity
-              onPress={() => Click(item.text)}
-              key={shortid.generate()}
-              style={styles.opacity}
-            >
-              <View style={styles.container}>
-                <View style={styles.messageContainer}>
-                  <Text style={[styles.text, { fontFamily: "MR" }]}>
-                    {item.text}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      );
-    }
+ const message =  useSelector((state: any) => state.message)
+
+  const [text, setText] = useState("");
+
+  const [Messages, setMessages] = useState(message.message);
+  useEffect(()=> {
+    setMessages(message.message)
+  })
+
+  const dispatch = useDispatch();
+
+  const handlePress = () => {
+    setText('')
+    const sendMessage = {
+      last_name: "davlat",
+      first_name: "raupov",
+      userId: shortid.generate(),
+      messageId: shortid.generate(),
+      text: text,
+      isLeft: false,
+      date: moment().format('h:mm')
+    };
+    dispatch(setMessage(sendMessage));
   };
-
-  const QuestionComponent = (props: any) => {
-    const time = props.currentMessage.createdAt.toString();
-
-    const [fontsLoaded] = useFonts({
-      MR: require("../fonts/Manrope-SemiBold.ttf"),
-    });
-    if (fontsLoaded) {
-      return (
-        <View style={styles.Qcontainer}>
-          <View style={styles.QmessageContainer}>
-            <View style={styles.QmessageView}>
-              <Text style={[styles.Qtext, { fontFamily: "MR" }]}>
-                {props.currentMessage.text}
-              </Text>
-            </View>
-            <View style={styles.QdateView}>
-              <Text style={[styles.QtextDate, { fontFamily: "MR" }]}>
-                {time.slice(15, 21)}
-              </Text>
-            </View>
-          </View>
-        </View>
-      );
-    }
-  };
-
-  const buble = (props: any) => {
-    if (props.currentMessage.user._id === 2) {
-      return <AnswerComponent {...props} />;
-    }
-    return props.currentMessage._id === 1 ? (
-      <QuestionVariant {...props.currentMessage} />
-    ) : (
-      <QuestionComponent {...props} />
-    );
-  };
-
-  const onSend = useCallback((messages = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
-    );
-  }, []);
 
   return (
-    // <BlurView intensity={100}>
-    <View
-      style={{
-        height: height,
-        width: width,
-        flex: 1,
-        backgroundColor: "white",
-      }}
-    >
-      <GiftedChat
-        messages={messages}
-        onSend={(messages) => onSend(messages)}
-        user={{ _id: 1 }}
-        renderBubble={buble}
-        alwaysShowSend
-        renderSend={renderSend}
-        renderInputToolbar={(props) => renderInputToolbar(props)}
-        messagesContainerStyle={{ backgroundColor: "white" }}
-        renderAvatar={null}
-        minInputToolbarHeight={height / 8}
+    <View style={styles.container}>
+      <ScrollView style={{marginBottom: height/35}} contentContainerStyle={{paddingBottom: height/50}}>
+<AnswerComponent data={Messages} />
+</ScrollView>
+      <TextInput
+        style={styles.textinput}
+        value={text}
         placeholder={"Сообщение..."}
+        placeholderTextColor={"#8997A8"}
+        onChangeText={(typed) => setText(typed)}
+        multiline={true}
       />
-      {/* <PhotoPicker/> */}
+   
+      <TouchableOpacity
+        onPress={() => handlePress()}
+        style={{
+          height: width/15.5,
+          width: width/12,
+          bottom: height/26,
+          right: width/17,
+          position: "absolute",
+          display: text===''?'none':'flex'
+        }}
+      >
+       <Image style={{height: width/15.5, width: width/12, position: 'relative'}} source={require('../icons/send.png')} /> 
+      </TouchableOpacity>
     </View>
-    // </BlurView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    borderRadius: 8,
-    maxWidth: "95%",
-    alignSelf: "flex-end",
-    flexDirection: "row",
-    paddingHorizontal: 10,
-    marginHorizontal: 10,
-    paddingTop: 5,
-    paddingBottom: 10,
-    marginTop: height / 30,
-    borderWidth: 2,
-    borderColor: "#2761A4",
+    flex: 1,
   },
-  opacity: {
-    alignSelf: "flex-end",
-  },
-  messageContainer: {
-    maxWidth: "90%",
-    alignSelf: "flex-end",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  dateView: {
-    backgroundColor: "transparent",
-    justifyContent: "flex-end",
-  },
-  text: {
-    alignSelf: "flex-start",
-    fontSize: width / 22.5,
-    color: "#2761A4",
-    textAlign: "center",
-    fontWeight: "600",
-  },
-  textDate: {
-    fontSize: width / 28.3,
-    color: "#5E637A",
-    alignSelf: "flex-end",
-  },
-  Qcontainer: {
-    backgroundColor: "#E3EAF0",
-    borderRadius: 8,
-    maxWidth: "100%",
-    alignSelf: "flex-end",
-    flexDirection: "row",
-    paddingHorizontal: 10,
-    marginHorizontal: 10,
-    paddingTop: 5,
-    paddingBottom: 10,
-    marginTop: height / 30,
-  },
-  QmessageContainer: {
-    maxWidth: "95%",
-    alignSelf: "flex-end",
-    flexDirection: "row",
-  },
-  QmessageView: {
-    backgroundColor: "transparent",
-    maxWidth: "90%",
-  },
-  QdateView: {
-    backgroundColor: "transparent",
-    justifyContent: "flex-end",
-    paddingLeft: 5,
-  },
-  Qtext: {
-    alignSelf: "flex-start",
-    fontSize: width / 22.5,
-    color: "#363F52",
-    textAlign: "left",
-    fontWeight: "600",
-  },
-  QtextDate: {
-    fontSize: width / 28.3,
-    color: "#5E637A",
-    alignSelf: "flex-end",
+  textinput: {
+    height: height / 15,
+    paddingLeft: width / 50,
+    paddingRight: width / 10,
+    width: width - width / 12,
+    backgroundColor: "#D6D6D7",
+    borderRadius: 6,
+    position: "relative",
+    bottom: height / 50,
+    color: "#8997A8",
+    fontSize: width/20,
+    left: width/25
   },
 });

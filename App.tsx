@@ -1,18 +1,17 @@
-import { StyleSheet, View } from "react-native";
-import AlertComponent from "./src/components/AlertComponent";
-import ErrorComponent from "./src/components/ErrorComponent";
+import { StyleSheet } from "react-native";
+import { Provider } from "react-redux";
 import StackNavigator from "./src/Navigators/StackNavigator";
+import { store } from "./src/redux/store";
 
   
 
 export default function App() {
 
   return (
-    <View style={styles.container}>
+<Provider store={store}>
       <StackNavigator />
-      {/* <AlertComponent/> */}
-      {/* <ErrorComponent/> */}
-    </View>
+</Provider>
+
   );
 }
 

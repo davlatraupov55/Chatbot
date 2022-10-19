@@ -2,7 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, Image, View } from "react-native";
 import { height, width } from "../consts/dimentions";
 import { useFonts } from "expo-font";
 
-export default function BackButton() {
+export default function BackButton():any {
   const [fontsLoaded] = useFonts({
     MR: require("../fonts/Manrope-SemiBold.ttf"),
   });
